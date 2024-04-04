@@ -12,6 +12,13 @@ namespace _11_лабораторная_работа
 {
     internal class Program
     {
+        public static Dictionary<K, T> SortDictionaryByKey<K, T>(Dictionary<K, T> dictionary)
+        {
+            var sortedDictionary = dictionary.OrderBy(x => x.Key)
+                                             .ToDictionary(x => x.Key, y => y.Value);
+
+            return sortedDictionary;
+        }
         static void Main(string[] args)
         {
             #region Dictionary
@@ -35,6 +42,7 @@ namespace _11_лабораторная_работа
                     i--;
                 }
             }
+
             Console.WriteLine("Dictionary:");
             foreach (var item in dict.Keys)
             {
@@ -43,7 +51,43 @@ namespace _11_лабораторная_работа
             Console.WriteLine($"в словаре {dict.Count} элементов");
             //Console.WriteLine("vvedite element for search");
 
+            Console.WriteLine("Общий баланс дебетовых карт:"); //считаем вместе с молодежными
+            double sum11 = 0;
+            double count11 = 0;
+            foreach (BankCard item in dict.Values)
+            {
+                if (item is DebitCard t)
+                {
+                    sum11 += t.GetBalance();
+                    count11++;
+                }
+            }
+            Console.WriteLine($"{sum11} рублей");
 
+            Console.WriteLine("");
+            Console.WriteLine("Имена людей с истекшим сроком карты:");
+            DateTime m1 = DateTime.UtcNow;
+            foreach (BankCard item in dict.Values)
+            {
+                if (item is BankCard s)
+                    if (s.Term <= DateTime.Today)
+                        Console.WriteLine(item.Name);
+            }
+
+            Console.WriteLine("");
+            Console.WriteLine("Средний лимит кредитных карт:");
+            double sum2 = 0;
+            double count2 = 0;
+
+            foreach (BankCard item in dict.Values)
+            {
+                if (item is CreditCard l)
+                {
+                    sum2 += l.GetLimit();
+                    count2++;
+                }
+            }
+            Console.WriteLine(sum2 / count2);
 
             Console.WriteLine("vvedite element for search");
             DebitCard find = new DebitCard();
@@ -51,7 +95,12 @@ namespace _11_лабораторная_работа
 
             BankCard b1 = new BankCard(find.Number, find.Name, find.Term, find.id.number1);
             dict.Add(b1, find);
-
+            var sortedDict = SortDictionaryByKey(dict);
+            Console.WriteLine("Проверка сортировки:");
+            foreach (var item in sortedDict)
+            {
+                Console.WriteLine($"Key: {item.Key}, Value: {item.Value}");
+            }
             Console.WriteLine("Dictionary with new element:");
             foreach (var item in dict.Keys)
             {
@@ -112,6 +161,14 @@ namespace _11_лабораторная_работа
                 var milliseconds = 300;
                 Thread.Sleep(milliseconds);
             }
+            for (int i = 0; i < 2; i++)
+            {
+                DebitCard c1 = new DebitCard();
+                list1.Add(c1);
+                c1.RandomInit();
+                var milliseconds = 300;
+                Thread.Sleep(milliseconds);
+            }
             for (int i = 0; i < 5; i++)
             {
                 CreditCard r = new CreditCard();
@@ -155,6 +212,23 @@ namespace _11_лабораторная_работа
                     if (s.Term <= DateTime.Today)
                         Console.WriteLine(item.Name);
             }
+
+            Console.WriteLine("");
+            Console.WriteLine("Средний лимит кредитных карт:");
+            double sum1 = 0;
+            double count1 = 0;
+
+            foreach (BankCard item in list1)
+            {
+                if (item is CreditCard l)
+                {
+                    sum1 += l.GetLimit();
+                    count1++;
+                }
+            }
+            Console.WriteLine(sum1 / count1);
+
+
             //search and remove
             Console.WriteLine("Введите элемент для поиска:");
             BankCard bankc = new BankCard();
